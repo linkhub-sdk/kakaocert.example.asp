@@ -15,8 +15,16 @@ Public Property Let LinkID(ByVal value)
     m_linkID = value
 End Property
 
+Public Property Get LinkID()
+	LinkID = m_linkID
+End Property
+
 Public Property Let SecretKey(ByVal value)
     m_secretKey = value
+End Property
+
+Public Property Get SecretKey()
+	SecretKey = m_secretKey
 End Property
 
 Public Sub Class_Initialize
@@ -44,6 +52,14 @@ Public function getTime
     Set winhttp1 = Nothing
        
     getTime = result
+End Function
+
+Public Function b64md5(postData)
+	b64md5 = m_sha1.b64_md5(postData)
+End Function
+
+Public Function b64hmacsha1(secretkey, target)
+	b64hmacsha1 = m_sha1.b64_hmac_sha1(secretkey, target)
 End Function
 
 public function getToken(serviceID , access_id, Scope, forwardIP)

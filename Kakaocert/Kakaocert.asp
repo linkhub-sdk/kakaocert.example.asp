@@ -21,6 +21,7 @@ Class KakaocertService
 	End Property
 
 	Public Sub Class_Initialize
+		
 		On Error Resume next
 		If  Not(KAKAOCERT_TOKEN_CACHE Is Nothing) Then
 			Set m_TokenDic = KAKAOCERT_TOKEN_CACHE
@@ -130,18 +131,19 @@ Class KakaocertService
 		End If
 
 		xDate = m_linkhub.getTime
-		Call winhttp1.setRequestHeader("x-lh-date", xdate)
+		Call winhttp1.setRequestHeader("x-lh-date", xDate)
 		Call winhttp1.setRequestHeader("x-lh-version", "1.0")
-		
+	
+
 		target = "POST" + Chr(10)
-		target = target + m_sha1.b64_md5(postData) + Chr(10)
+		target = target + m_Linkhub.b64md5(postData) + Chr(10)
 		target = target + xDate + Chr(10)
 		target = target + "1.0" + Chr(10)
 		
-		auth_target =  m_sha1.b64_hmac_sha1(m_Linkhub.SecretKey, target)
+		auth_target =  m_Linkhub.b64hmacsha1(m_Linkhub.SecretKey, target)
 
-		Call winhttp1.setRequestHeader("x-kc-auth", m_Linkhub.LinkID + " " + auth_target)
-		
+		Call winhttp1.setRequestHeader("x-kc-auth", m_Linkhub.LinkID + " " +auth_target)
+
 		winhttp1.Send (postdata)
 		winhttp1.WaitForResponse
 		result = winhttp1.responseText
