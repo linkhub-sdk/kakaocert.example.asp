@@ -8,14 +8,14 @@
 
 <%
 	'**************************************************************
-	'  간편 전자서명을 요청합니다.
+	'  본인인증 전자서명을 요청합니다.
     '**************************************************************
 
 	' Kakaocert 이용기관코드, Kakaocert 파트너 사이트에서 확인
 	clientCode = "020040000001"		
 	
-	' 간편 전자서명 요청정보 객체
-	Set requestObj = New RequestESignObj
+	' 본인인증 요청정보 객체
+	Set requestObj = New RequestVerifyAuthObj
 
 	requestObj.CallCenterNum = "07043042991"
 
@@ -65,7 +65,7 @@
 
 	On Error Resume Next
 
-		receiptId = m_KakaocertService.RequestESign(clientCode, requestObj)
+		receiptId = m_KakaocertService.RequestVerifyAuth(clientCode, requestObj)
 
 		If Err.Number <> 0 then
 			code = Err.Number
@@ -81,7 +81,7 @@
 			<p class="heading1">Response</p>
 			<br/>
 			<fieldset class="fieldset1">
-				<legend>간편 전자서명 요청</legend>
+				<legend>본인인증 요청</legend>
 				<% If code = 0 Then %>
 					<ul>
 						<li>ReceiptId(접수아이디) : <%=receiptId%> </li>

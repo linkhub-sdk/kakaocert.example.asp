@@ -8,14 +8,14 @@
 
 <%
 	'**************************************************************
-	'  간편 전자서명을 요청합니다.
+	'  자동이체 출금동의 전자서명을 요청합니다.
     '**************************************************************
 
 	' Kakaocert 이용기관코드, Kakaocert 파트너 사이트에서 확인
 	clientCode = "020040000001"		
 	
-	' 간편 전자서명 요청정보 객체
-	Set requestObj = New RequestESignObj
+	' 자동이체 출금동의 요청정보 객체
+	Set requestObj = New RequestCMSObj
 
 	requestObj.CallCenterNum = "07043042991"
 
@@ -32,7 +32,19 @@
 	requestObj.ReceiverHP = "01012341234"
 
 	' 수신자 성명
-	requestObj.ReceiverName = "테스트"
+	requestObj.ReceiverName = "홍길동"
+
+	' 예금주명	
+	requestObj.BankAccountName = "예금주명"
+	
+	' 계좌번호, 이용기관은 사용자가 식별가능한 범위내에서 계좌번호의 일부를 마스킹 처리할 수 있음 (예시) 371-02-6***85
+	requestObj.BankAccountNum = "9-4324-5**7-58"
+	
+	' 은행코드
+	requestObj.BankCode = "004"
+
+	' 납부자번호, 이용기관에서 부여한 고객식별번호
+	requestObj.ClientUserID = "clientUserID-0423-01"
 
 	'별칭코드, 이용기관이 생성한 별칭코드 (파트너 사이트에서 확인가능)
 	' 카카오톡 인증메시지 중 "요청기관" 항목에 표시
@@ -44,9 +56,6 @@
 
 	' 인증요청 메시지 제목, 카카오톡 인증메시지 중 "요청구분" 항목에 표시
 	requestObj.TMSTitle = "TMSTitle 0423"
-
-	' 전자서명할 토큰 원문
-	requestObj.Token = "TMS Token 0423 "
 
 	' 은행계좌 실명확인 생략여부
 	' true : 은행계좌 실명확인 절차를 생략
@@ -65,7 +74,7 @@
 
 	On Error Resume Next
 
-		receiptId = m_KakaocertService.RequestESign(clientCode, requestObj)
+		receiptId = m_KakaocertService.RequestCMS(clientCode, requestObj)
 
 		If Err.Number <> 0 then
 			code = Err.Number
@@ -81,7 +90,7 @@
 			<p class="heading1">Response</p>
 			<br/>
 			<fieldset class="fieldset1">
-				<legend>간편 전자서명 요청</legend>
+				<legend>자동이체 출금동의 전자서명 요청</legend>
 				<% If code = 0 Then %>
 					<ul>
 						<li>ReceiptId(접수아이디) : <%=receiptId%> </li>

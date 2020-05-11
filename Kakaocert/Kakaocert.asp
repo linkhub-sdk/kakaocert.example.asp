@@ -223,6 +223,85 @@ Class KakaocertService
 
 	End Function 
 
+	Public Function RequestVerifyAuth(ClientCode, ByRef RequestVerifyAuthObj)
+		
+		Set tmpDic = RequestVerifyAuthObj.toJsonInfo
+
+		postdata = toString(tmpDic)
+		
+		Set result = httpPOST("/SignIdentity/Request", getSession_token(ClientCode), "", postdata, "")
+
+		RequestVerifyAuth = result.receiptId
+
+	End Function
+
+	Public Function RequestCMS(ClientCode, ByRef RequestCMSObj)
+		
+		Set tmpDic = RequestCMSObj.toJsonInfo
+
+		postdata = toString(tmpDic)
+		
+		Set result = httpPOST("/SignDirectDebit/Request", getSession_token(ClientCode), "", postdata, "")
+
+		RequestCMS = result.receiptId
+
+	End Function
+
+	Public Function GetESignResult(ClientCode, ReceiptID)
+		If ClientCode = "" Then
+			Err.Raise -99999999, "KAKAOCERT", "이용기관코드가 입력되지 않았습니다."
+		End If
+
+		If ReceiptID = "" Then
+			Err.Raise -99999999, "KAKAOCERT", "접수아이디가 입력되지 않았습니다."
+		End If
+
+
+		Set infoTmp = New ResultESignObj
+
+		Set result = httpGET("/SignToken/" + ReceiptID, getSession_token(ClientCode), "")
+
+		infoTmp.fromJsonInfo result
+		Set GetESignResult = infoTmp
+	End Function 
+
+
+	Public Function GetCMSResult(ClientCode, ReceiptID)
+		If ClientCode = "" Then
+			Err.Raise -99999999, "KAKAOCERT", "이용기관코드가 입력되지 않았습니다."
+		End If
+
+		If ReceiptID = "" Then
+			Err.Raise -99999999, "KAKAOCERT", "접수아이디가 입력되지 않았습니다."
+		End If
+
+
+		Set infoTmp = New ResultCMSObj
+
+		Set result = httpGET("/SignDirectDebit/" + ReceiptID, getSession_token(ClientCode), "")
+
+		infoTmp.fromJsonInfo result
+		Set GetCMSResult = infoTmp
+	End Function 
+
+	Public Function GetVerifyAuthResult(ClientCode, ReceiptID)
+		If ClientCode = "" Then
+			Err.Raise -99999999, "KAKAOCERT", "이용기관코드가 입력되지 않았습니다."
+		End If
+
+		If ReceiptID = "" Then
+			Err.Raise -99999999, "KAKAOCERT", "접수아이디가 입력되지 않았습니다."
+		End If
+
+
+		Set infoTmp = New ResultVerifyAuthObj
+
+		Set result = httpGET("/SignIdentity/" + ReceiptID, getSession_token(ClientCode), "")
+
+		infoTmp.fromJsonInfo result
+		Set GetVerifyAuthResult = infoTmp
+	End Function 
+
 End Class
 
 Class RequestESignObj
@@ -255,6 +334,276 @@ Class RequestESignObj
 		toJsonInfo.Set "isAllowSimpleRegistYN", isAllowSimpleRegistYN
 		toJsonInfo.Set "isVerifyNameYN", isVerifyNameYN
 	End Function 
+
+End Class
+
+Class ResultESignObj
+
+	public receiptID
+	public regDT
+	public state
+	public receiverHP
+	public receiverName
+	public receiverBirthday
+	public expires_in
+	public callCenterNum
+	public token
+	public allowSimpleRegistYN
+	public verifyNameYN
+	public payload
+	public requestDT
+	public expireDT
+	public clientCode
+	public clientName
+	public tmstitle
+	public tmsmessage
+	public signedData
+
+	public subClientName
+	public subClientCode
+	public viewDT
+	public completeDT
+	public verifyDT
+
+	Public Sub fromJsonInfo(jsonInfo)
+		On Error Resume Next
+		receiptID = jsonInfo.receiptID
+		regDT = jsonInfo.regDT
+		state = jsonInfo.state
+		receiverHP = jsonInfo.receiverHP
+		receiverName = jsonInfo.receiverName
+		receiverBirthday = jsonInfo.receiverBirthday
+		expires_in = jsonInfo.expires_in
+		callCenterNum = jsonInfo.callCenterNum
+		token = jsonInfo.token
+		allowSimpleRegistYN = jsonInfo.allowSimpleRegistYN
+		verifyNameYN = jsonInfo.verifyNameYN
+		payload = jsonInfo.payload
+		requestDT = jsonInfo.requestDT
+		expireDT = jsonInfo.expireDT
+		clientCode = jsonInfo.clientCode
+		clientName = jsonInfo.clientName
+		tmstitle = jsonInfo.tmstitle
+		tmsmessage = jsonInfo.tmsmessage
+		signedData = jsonInfo.signedData
+		subClientName = jsonInfo.subClientName
+		subClientCode = jsonInfo.subClientCode
+		viewDT = jsonInfo.viewDT
+		completeDT = jsonInfo.completeDT
+		verifyDT = jsonInfo.verifyDT
+
+		On Error GoTo 0
+	End Sub
+
+End Class
+
+Class RequestVerifyAuthObj
+
+	public CallCenterNum
+	public Expires_in
+	public PayLoad
+	public ReceiverBirthDay
+	public ReceiverHP
+	public ReceiverName
+	public SubClientID
+	public TMSMessage
+	public TMSTitle
+	public Token
+	public isAllowSimpleRegistYN
+	public isVerifyNameYN
+
+	Public Function toJsonInfo()
+		Set toJsonInfo = JSON.parse("{}")
+		toJsonInfo.Set "CallCenterNum", CallCenterNum
+		toJsonInfo.Set "Expires_in", Expires_in
+		toJsonInfo.Set "PayLoad", PayLoad
+		toJsonInfo.Set "ReceiverBirthDay", ReceiverBirthDay
+		toJsonInfo.Set "ReceiverHP", ReceiverHP
+		toJsonInfo.Set "ReceiverName", ReceiverName
+		toJsonInfo.Set "SubClientID", SubClientID
+		toJsonInfo.Set "TMSMessage", TMSMessage
+		toJsonInfo.Set "TMSTitle", TMSTitle
+		toJsonInfo.Set "Token", Token
+		toJsonInfo.Set "isAllowSimpleRegistYN", isAllowSimpleRegistYN
+		toJsonInfo.Set "isVerifyNameYN", isVerifyNameYN
+	End Function 
+
+End Class
+
+Class ResultVerifyAuthObj
+
+	public receiptID
+	public regDT
+	public state
+	public receiverHP
+	public receiverName
+	public receiverBirthday
+	public expires_in
+	public callCenterNum
+	public token
+	public allowSimpleRegistYN
+	public verifyNameYN
+	public payload
+	public requestDT
+	public expireDT
+	public clientCode
+	public clientName
+	public tmstitle
+	public tmsmessage
+	public returnToken
+
+	public subClientName
+	public subClientCode
+	public viewDT
+	public completeDT
+	public verifyDT
+
+	Public Sub fromJsonInfo(jsonInfo)
+		On Error Resume Next
+		receiptID = jsonInfo.receiptID
+		regDT = jsonInfo.regDT
+		state = jsonInfo.state
+		receiverHP = jsonInfo.receiverHP
+		receiverName = jsonInfo.receiverName
+		receiverBirthday = jsonInfo.receiverBirthday
+		expires_in = jsonInfo.expires_in
+		callCenterNum = jsonInfo.callCenterNum
+		token = jsonInfo.token
+		allowSimpleRegistYN = jsonInfo.allowSimpleRegistYN
+		verifyNameYN = jsonInfo.verifyNameYN
+		payload = jsonInfo.payload
+		requestDT = jsonInfo.requestDT
+		expireDT = jsonInfo.expireDT
+		clientCode = jsonInfo.clientCode
+		clientName = jsonInfo.clientName
+		tmstitle = jsonInfo.tmstitle
+		tmsmessage = jsonInfo.tmsmessage
+		returnToken = jsonInfo.returnToken
+
+		subClientName = jsonInfo.subClientName
+		subClientCode = jsonInfo.subClientCode
+		viewDT = jsonInfo.viewDT
+		completeDT = jsonInfo.completeDT
+		verifyDT = jsonInfo.verifyDT
+
+		On Error GoTo 0
+	End Sub
+
+End Class
+
+Class RequestCMSObj
+
+	public CallCenterNum
+	public Expires_in
+	public PayLoad
+	public ReceiverBirthDay
+	public ReceiverHP
+	public ReceiverName
+	public SubClientID
+	public TMSMessage
+	public TMSTitle
+	public isAllowSimpleRegistYN
+	public isVerifyNameYN
+	Public BankAccountName
+	Public BankAccountNum
+	Public BankCode
+	Public ClientUserID
+
+	Public Function toJsonInfo()
+		Set toJsonInfo = JSON.parse("{}")
+		toJsonInfo.Set "CallCenterNum", CallCenterNum
+		toJsonInfo.Set "Expires_in", Expires_in
+		toJsonInfo.Set "PayLoad", PayLoad
+		toJsonInfo.Set "ReceiverBirthDay", ReceiverBirthDay
+		toJsonInfo.Set "ReceiverHP", ReceiverHP
+		toJsonInfo.Set "ReceiverName", ReceiverName
+		toJsonInfo.Set "SubClientID", SubClientID
+		toJsonInfo.Set "TMSMessage", TMSMessage
+		toJsonInfo.Set "TMSTitle", TMSTitle
+		toJsonInfo.Set "isAllowSimpleRegistYN", isAllowSimpleRegistYN
+		toJsonInfo.Set "isVerifyNameYN", isVerifyNameYN
+		toJsonInfo.Set "BankAccountName", BankAccountName
+		toJsonInfo.Set "BankAccountNum", BankAccountNum
+		toJsonInfo.Set "BankCode", BankCode
+		toJsonInfo.Set "ClientUserID", ClientUserID
+	End Function 
+
+End Class
+
+Class ResultCMSObj
+
+	public receiptID
+	public regDT
+	public state
+	public receiverHP
+	public receiverName
+
+	public receiverBirthday
+	public expires_in
+	public callCenterNum
+	public token
+	public allowSimpleRegistYN
+	
+	public verifyNameYN
+	public payload
+	public requestDT
+	public expireDT
+	public clientCode
+
+	public clientName
+	public tmstitle
+	public tmsmessage
+	public signedData
+	public subClientName
+
+	public subClientCode
+	public viewDT
+	public completeDT
+	public verifyDT
+	public bankAccountName
+
+	public bankAccountNum
+	public bankCode
+	public clientUserID
+
+	Public Sub fromJsonInfo(jsonInfo)
+		On Error Resume Next
+		receiptID = jsonInfo.receiptID	
+		regDT = jsonInfo.regDT
+		state = jsonInfo.state
+		receiverHP = jsonInfo.receiverHP
+		receiverName = jsonInfo.receiverName
+
+		receiverBirthday = jsonInfo.receiverBirthday
+		expires_in = jsonInfo.expires_in
+		callCenterNum = jsonInfo.callCenterNum
+		token = jsonInfo.token
+		allowSimpleRegistYN = jsonInfo.allowSimpleRegistYN
+
+		verifyNameYN = jsonInfo.verifyNameYN
+		payload = jsonInfo.payload
+		requestDT = jsonInfo.requestDT
+		expireDT = jsonInfo.expireDT
+		clientCode = jsonInfo.clientCode
+
+		clientName = jsonInfo.clientName
+		tmstitle = jsonInfo.tmstitle
+		tmsmessage = jsonInfo.tmsmessage
+		signedData = jsonInfo.signedData
+		subClientName = jsonInfo.subClientName
+
+		subClientCode = jsonInfo.subClientCode
+		viewDT = jsonInfo.viewDT
+		completeDT = jsonInfo.completeDT
+		verifyDT = jsonInfo.verifyDT
+		bankAccountName = jsonInfo.bankAccountName
+
+		bankAccountNum = jsonInfo.bankAccountNum
+		bankCode = jsonInfo.bankCode
+		clientUserID = jsonInfo.clientUserID
+
+		On Error GoTo 0
+	End Sub
 
 End Class
 
