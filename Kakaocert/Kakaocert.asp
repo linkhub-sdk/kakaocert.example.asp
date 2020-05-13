@@ -342,9 +342,6 @@ Class ResultESignObj
 	public receiptID
 	public regDT
 	public state
-	public receiverHP
-	public receiverName
-	public receiverBirthday
 	public expires_in
 	public callCenterNum
 	public token
@@ -435,9 +432,6 @@ Class ResultVerifyAuthObj
 	public receiptID
 	public regDT
 	public state
-	public receiverHP
-	public receiverName
-	public receiverBirthday
 	public expires_in
 	public callCenterNum
 	public token
@@ -535,10 +529,6 @@ Class ResultCMSObj
 	public receiptID
 	public regDT
 	public state
-	public receiverHP
-	public receiverName
-
-	public receiverBirthday
 	public expires_in
 	public callCenterNum
 	public token
@@ -560,21 +550,12 @@ Class ResultCMSObj
 	public viewDT
 	public completeDT
 	public verifyDT
-	public bankAccountName
-
-	public bankAccountNum
-	public bankCode
-	public clientUserID
 
 	Public Sub fromJsonInfo(jsonInfo)
 		On Error Resume Next
 		receiptID = jsonInfo.receiptID	
 		regDT = jsonInfo.regDT
 		state = jsonInfo.state
-		receiverHP = jsonInfo.receiverHP
-		receiverName = jsonInfo.receiverName
-
-		receiverBirthday = jsonInfo.receiverBirthday
 		expires_in = jsonInfo.expires_in
 		callCenterNum = jsonInfo.callCenterNum
 		token = jsonInfo.token
@@ -596,11 +577,6 @@ Class ResultCMSObj
 		viewDT = jsonInfo.viewDT
 		completeDT = jsonInfo.completeDT
 		verifyDT = jsonInfo.verifyDT
-		bankAccountName = jsonInfo.bankAccountName
-
-		bankAccountNum = jsonInfo.bankAccountNum
-		bankCode = jsonInfo.bankCode
-		clientUserID = jsonInfo.clientUserID
 
 		On Error GoTo 0
 	End Sub
