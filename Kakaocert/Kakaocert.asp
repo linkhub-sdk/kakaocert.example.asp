@@ -211,15 +211,21 @@ Class KakaocertService
 		Set parse = m_Linkhub.parse(jsonString)
 	End Function
 
-	Public Function RequestESign(ClientCode, ByRef RequestESignObj)
+	Public Function RequestESign(ClientCode, ByRef RequestESignObj, IsAppUseYN)
 		
+		RequestESignObj.isAppUseYN = IsAppUseYN
+
 		Set tmpDic = RequestESignObj.toJsonInfo
 
 		postdata = toString(tmpDic)
+
+		Set infoTmp = New ResponseESign
 		
 		Set result = httpPOST("/SignToken/Request", getSession_token(ClientCode), "", postdata, "")
 
-		RequestESign = result.receiptId
+		infoTmp.fromJsonInfo result
+
+		Set RequestESign = infoTmp
 
 	End Function 
 
@@ -247,7 +253,7 @@ Class KakaocertService
 
 	End Function
 
-	Public Function GetESignResult(ClientCode, ReceiptID)
+	Public Function GetESignResult(ClientCode, ReceiptID, Signature)
 		If ClientCode = "" Then
 			Err.Raise -99999999, "KAKAOCERT", "이용기관코드가 입력되지 않았습니다."
 		End If
@@ -256,10 +262,15 @@ Class KakaocertService
 			Err.Raise -99999999, "KAKAOCERT", "접수아이디가 입력되지 않았습니다."
 		End If
 
+		uri = "/SignToken/" + ReceiptID
+
+		If Signature <> "" Then
+			uri = uri+"/"+Signature
+		End If 
 
 		Set infoTmp = New ResultESignObj
 
-		Set result = httpGET("/SignToken/" + ReceiptID, getSession_token(ClientCode), "")
+		Set result = httpGET(uri, getSession_token(ClientCode), "")
 
 		infoTmp.fromJsonInfo result
 		Set GetESignResult = infoTmp
@@ -304,6 +315,17 @@ Class KakaocertService
 
 End Class
 
+Class ResponseESign
+	Public tx_id
+	Public receiptId
+
+	Public Sub fromJsonInfo(jsonInfo)
+		On Error Resume Next
+		receiptId = jsonInfo.receiptId
+		tx_id = jsonInfo.tx_id
+		On Error GoTo 0
+	End Sub
+End Class
 Class RequestESignObj
 
 	public CallCenterNum
@@ -318,6 +340,7 @@ Class RequestESignObj
 	public Token
 	public isAllowSimpleRegistYN
 	public isVerifyNameYN
+	Public isAppUseYN
 
 	Public Function toJsonInfo()
 		Set toJsonInfo = JSON.parse("{}")
@@ -333,6 +356,7 @@ Class RequestESignObj
 		toJsonInfo.Set "Token", Token
 		toJsonInfo.Set "isAllowSimpleRegistYN", isAllowSimpleRegistYN
 		toJsonInfo.Set "isVerifyNameYN", isVerifyNameYN
+		toJsonInfo.Set "isAppUseYN", isAppUseYN
 	End Function 
 
 End Class
@@ -361,6 +385,8 @@ Class ResultESignObj
 	public viewDT
 	public completeDT
 	public verifyDT
+	public appUseYN
+	Public tx_id
 
 	Public Sub fromJsonInfo(jsonInfo)
 		On Error Resume Next
@@ -388,6 +414,8 @@ Class ResultESignObj
 		viewDT = jsonInfo.viewDT
 		completeDT = jsonInfo.completeDT
 		verifyDT = jsonInfo.verifyDT
+		appUseYN = jsonInfo.appUseYN
+		tx_id = jsonInfo.tx_id
 
 		On Error GoTo 0
 	End Sub

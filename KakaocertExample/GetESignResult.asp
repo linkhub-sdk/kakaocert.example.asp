@@ -7,18 +7,22 @@
 <!--#include file="common.asp"--> 
 <%
 	'**************************************************************
-	' 간편 전자서명 요청결과를 확인합니다.
+	' 전자서명 요청결과를 확인합니다.
 	'**************************************************************
 
 	' Kakaocert 이용기관코드, Kakaocert 파트너 사이트에서 확인
 	clientCode = "020040000001"	
 
 	' 접수 아이디
-	receiptID = "020051111014100001"
+	receiptID = "020090115561200001"
 	
-	On Error Resume Next
+	' 앱스킴 서명값
+	' - AppToApp 인증시 - 앱스킴 성공 서명값 기재
+	' - Talk To Message 인증시 - 공백("") 처리
+	signature = ""
 
-	Set result = m_KakaocertService.GetESignResult(clientCode, receiptID)
+	On Error Resume Next
+	Set result = m_KakaocertService.GetESignResult(clientCode, receiptID, signature)
 
 	If Err.Number <> 0 Then
 		code = Err.Number
@@ -32,7 +36,7 @@
 			<p class="heading1">Response</p>
 			<br/>
 			<fieldset class="fieldset1">
-				<legend>간편 전자서명 결과정보 확인 </legend>
+				<legend>전자서명 결과정보 확인 </legend>
 				<% 
 					If code = 0 Then 
 				%>
@@ -58,6 +62,8 @@
 						<li>viewDT (수신자 카카오톡 인증메시지 확인일시) : <%=result.viewDT %> </li>
 						<li>completeDT (수신자 카카오톡 전자서명 완료일시	) : <%=result.completeDT %> </li>
 						<li>verifyDT (전자서명 검증일시) : <%=result.verifyDT %> </li>
+						<li>appUseYN (AppToApp 인증여부) : <%=result.appUseYN %> </li>
+						<li>tx_id (카카오톡 트랜잭션아이디[앱스킴 호출용]) : <%=result.tx_id %> </li>
 						
 					</ul>	
 					<%	
