@@ -7,32 +7,32 @@
 <!--#include file="common.asp"--> 
 <%
 	'**************************************************************
-	' 자동이체 출금동의 요청결과를 확인합니다.
+	' 자동이체 출금동의 서명상태를 확인합니다.
 	'**************************************************************
 
 	' Kakaocert 이용기관코드, Kakaocert 파트너 사이트에서 확인
 	clientCode = "020040000001"	
 
 	' 접수 아이디
-	receiptID = "020051110590700001"
+	receiptID = "020090817135900001"
 	
-	On Error Resume Next
+'	On Error Resume Next
 
-	Set result = m_KakaocertService.GetCMSResult(clientCode, receiptID)
+	Set result = m_KakaocertService.GetCMSState(clientCode, receiptID)
 
 	If Err.Number <> 0 Then
 		code = Err.Number
 		message = Err.Description
 		Err.Clears
 	End If	
-	On Error GoTo 0 
+'	On Error GoTo 0 
 %>
 	<body>
 		<div id="content">
 			<p class="heading1">Response</p>
 			<br/>
 			<fieldset class="fieldset1">
-				<legend>자동이체 출금동의 결과정보 확인 </legend>
+				<legend>자동이체 출금동의 서명상태 확인 </legend>
 				<% 
 					If code = 0 Then 
 				%>
@@ -51,7 +51,7 @@
 						<li>expireDT (인증요청 만료일시) : <%=result.expireDT %> </li>
 						<li>tmstitle (인증요청 메시지 제목) : <%=result.tmstitle %> </li>
 						<li>tmsmessage (인증요청 메시지 부가내용) : <%=result.tmsmessage %> </li>
-						<li>signedData (전자서명 데이터 전문) : <%=result.signedData %> </li>
+
 						<li>subClientName (별칭) : <%=result.subClientName %> </li>
 						<li>subClientCode (별칭코드) : <%=result.subClientCode %> </li>
 						<li>viewDT (수신자 카카오톡 인증메시지 확인일시) : <%=result.viewDT %> </li>

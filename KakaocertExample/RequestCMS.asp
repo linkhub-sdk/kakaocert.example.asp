@@ -29,7 +29,7 @@
 	requestObj.ReceiverBirthDay = "19700101"
 
 	' 수신자 휴대폰번호
-	requestObj.ReceiverHP = "01012341234"
+	requestObj.ReceiverHP = "010111222"
 
 	' 수신자 성명
 	requestObj.ReceiverName = "홍길동"

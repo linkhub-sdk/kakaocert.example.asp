@@ -253,7 +253,7 @@ Class KakaocertService
 
 	End Function
 
-	Public Function GetESignResult(ClientCode, ReceiptID, Signature)
+	Public Function GetESignState(ClientCode, ReceiptID)
 		If ClientCode = "" Then
 			Err.Raise -99999999, "KAKAOCERT", "이용기관코드가 입력되지 않았습니다."
 		End If
@@ -262,22 +262,18 @@ Class KakaocertService
 			Err.Raise -99999999, "KAKAOCERT", "접수아이디가 입력되지 않았습니다."
 		End If
 
-		uri = "/SignToken/" + ReceiptID
-
-		If Signature <> "" Then
-			uri = uri+"/"+Signature
-		End If 
+		uri = "/SignToken/Status/" + ReceiptID
 
 		Set infoTmp = New ResultESignObj
 
 		Set result = httpGET(uri, getSession_token(ClientCode), "")
 
 		infoTmp.fromJsonInfo result
-		Set GetESignResult = infoTmp
+		Set GetESignState = infoTmp
 	End Function 
 
 
-	Public Function GetCMSResult(ClientCode, ReceiptID)
+	Public Function GetCMSState(ClientCode, ReceiptID)
 		If ClientCode = "" Then
 			Err.Raise -99999999, "KAKAOCERT", "이용기관코드가 입력되지 않았습니다."
 		End If
@@ -289,13 +285,13 @@ Class KakaocertService
 
 		Set infoTmp = New ResultCMSObj
 
-		Set result = httpGET("/SignDirectDebit/" + ReceiptID, getSession_token(ClientCode), "")
+		Set result = httpGET("/SignDirectDebit/Status/" + ReceiptID, getSession_token(ClientCode), "")
 
 		infoTmp.fromJsonInfo result
-		Set GetCMSResult = infoTmp
+		Set GetCMSState = infoTmp
 	End Function 
 
-	Public Function GetVerifyAuthResult(ClientCode, ReceiptID)
+	Public Function GetVerifyAuthState(ClientCode, ReceiptID)
 		If ClientCode = "" Then
 			Err.Raise -99999999, "KAKAOCERT", "이용기관코드가 입력되지 않았습니다."
 		End If
@@ -307,10 +303,70 @@ Class KakaocertService
 
 		Set infoTmp = New ResultVerifyAuthObj
 
-		Set result = httpGET("/SignIdentity/" + ReceiptID, getSession_token(ClientCode), "")
+		Set result = httpGET("/SignIdentity/Status/" + ReceiptID, getSession_token(ClientCode), "")
 
 		infoTmp.fromJsonInfo result
-		Set GetVerifyAuthResult = infoTmp
+		Set GetVerifyAuthState = infoTmp
+	End Function 
+
+
+	Public Function VerifyESign(ClientCode, ReceiptID, Signature)
+		If ClientCode = "" Then
+			Err.Raise -99999999, "KAKAOCERT", "이용기관코드가 입력되지 않았습니다."
+		End If
+
+		If ReceiptID = "" Then
+			Err.Raise -99999999, "KAKAOCERT", "접수아이디가 입력되지 않았습니다."
+		End If
+
+		uri = "/SignToken/Verify/" + ReceiptID
+
+		If Signature <> "" Then
+			uri = uri+"/"+Signature
+		End If 
+
+		Set infoTmp = New ResponseVerify
+
+		Set result = httpGET(uri, getSession_token(ClientCode), "")
+
+		infoTmp.fromJsonInfo result
+		Set VerifyESign = infoTmp
+	End Function 
+
+	Public Function VerifyCMS(ClientCode, ReceiptID)
+		If ClientCode = "" Then
+			Err.Raise -99999999, "KAKAOCERT", "이용기관코드가 입력되지 않았습니다."
+		End If
+
+		If ReceiptID = "" Then
+			Err.Raise -99999999, "KAKAOCERT", "접수아이디가 입력되지 않았습니다."
+		End If
+
+
+		Set infoTmp = New ResponseVerify
+
+		Set result = httpGET("/SignDirectDebit/Verify/" + ReceiptID, getSession_token(ClientCode), "")
+
+		infoTmp.fromJsonInfo result
+		Set VerifyCMS = infoTmp
+	End Function 
+
+	Public Function VerifyAuth(ClientCode, ReceiptID)
+		If ClientCode = "" Then
+			Err.Raise -99999999, "KAKAOCERT", "이용기관코드가 입력되지 않았습니다."
+		End If
+
+		If ReceiptID = "" Then
+			Err.Raise -99999999, "KAKAOCERT", "접수아이디가 입력되지 않았습니다."
+		End If
+
+
+		Set infoTmp = New ResponseVerify
+
+		Set result = httpGET("/SignIdentity/Verify/" + ReceiptID, getSession_token(ClientCode), "")
+
+		infoTmp.fromJsonInfo result
+		Set VerifyAuth = infoTmp
 	End Function 
 
 End Class
@@ -326,6 +382,20 @@ Class ResponseESign
 		On Error GoTo 0
 	End Sub
 End Class
+
+Class ResponseVerify
+	Public signedData
+	Public receiptId
+
+	Public Sub fromJsonInfo(jsonInfo)
+		On Error Resume Next
+		receiptId = jsonInfo.receiptId
+		signedData = jsonInfo.signedData
+		On Error GoTo 0
+	End Sub
+End Class
+
+
 Class RequestESignObj
 
 	public CallCenterNum
@@ -368,7 +438,7 @@ Class ResultESignObj
 	public state
 	public expires_in
 	public callCenterNum
-	public token
+
 	public allowSimpleRegistYN
 	public verifyNameYN
 	public payload
@@ -378,7 +448,7 @@ Class ResultESignObj
 	public clientName
 	public tmstitle
 	public tmsmessage
-	public signedData
+
 
 	public subClientName
 	public subClientCode
@@ -398,7 +468,7 @@ Class ResultESignObj
 		receiverBirthday = jsonInfo.receiverBirthday
 		expires_in = jsonInfo.expires_in
 		callCenterNum = jsonInfo.callCenterNum
-		token = jsonInfo.token
+
 		allowSimpleRegistYN = jsonInfo.allowSimpleRegistYN
 		verifyNameYN = jsonInfo.verifyNameYN
 		payload = jsonInfo.payload
@@ -408,7 +478,7 @@ Class ResultESignObj
 		clientName = jsonInfo.clientName
 		tmstitle = jsonInfo.tmstitle
 		tmsmessage = jsonInfo.tmsmessage
-		signedData = jsonInfo.signedData
+
 		subClientName = jsonInfo.subClientName
 		subClientCode = jsonInfo.subClientCode
 		viewDT = jsonInfo.viewDT
@@ -462,7 +532,7 @@ Class ResultVerifyAuthObj
 	public state
 	public expires_in
 	public callCenterNum
-	public token
+
 	public allowSimpleRegistYN
 	public verifyNameYN
 	public payload
@@ -472,7 +542,7 @@ Class ResultVerifyAuthObj
 	public clientName
 	public tmstitle
 	public tmsmessage
-	public returnToken
+
 
 	public subClientName
 	public subClientCode
@@ -490,7 +560,7 @@ Class ResultVerifyAuthObj
 		receiverBirthday = jsonInfo.receiverBirthday
 		expires_in = jsonInfo.expires_in
 		callCenterNum = jsonInfo.callCenterNum
-		token = jsonInfo.token
+
 		allowSimpleRegistYN = jsonInfo.allowSimpleRegistYN
 		verifyNameYN = jsonInfo.verifyNameYN
 		payload = jsonInfo.payload
@@ -500,7 +570,6 @@ Class ResultVerifyAuthObj
 		clientName = jsonInfo.clientName
 		tmstitle = jsonInfo.tmstitle
 		tmsmessage = jsonInfo.tmsmessage
-		returnToken = jsonInfo.returnToken
 
 		subClientName = jsonInfo.subClientName
 		subClientCode = jsonInfo.subClientCode
@@ -571,7 +640,7 @@ Class ResultCMSObj
 	public clientName
 	public tmstitle
 	public tmsmessage
-	public signedData
+
 	public subClientName
 
 	public subClientCode
@@ -598,7 +667,7 @@ Class ResultCMSObj
 		clientName = jsonInfo.clientName
 		tmstitle = jsonInfo.tmstitle
 		tmsmessage = jsonInfo.tmsmessage
-		signedData = jsonInfo.signedData
+
 		subClientName = jsonInfo.subClientName
 
 		subClientCode = jsonInfo.subClientCode

@@ -29,10 +29,10 @@
 	requestObj.ReceiverBirthDay = "19700101"
 
 	' 수신자 휴대폰번호
-	requestObj.ReceiverHP = "01012341234"
+	requestObj.ReceiverHP = "010111222"
 
 	' 수신자 성명
-	requestObj.ReceiverName = "테스트"
+	requestObj.ReceiverName = "홍길동"
 
 	'별칭코드, 이용기관이 생성한 별칭코드 (파트너 사이트에서 확인가능)
 	' 카카오톡 인증메시지 중 "요청기관" 항목에 표시
