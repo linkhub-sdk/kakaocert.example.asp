@@ -1,3 +1,5 @@
+<%@ Language = "VBScript" %>
+<% Option Explicit %>
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=euc-kr" />
@@ -14,24 +16,24 @@
 	'**************************************************************
 
 	' Kakaocert 이용기관코드, Kakaocert 파트너 사이트에서 확인
-	clientCode = "020040000001"	
+	Dim clientCode : clientCode = "020040000050"	
 
 	' 접수 아이디
-	receiptID = "020090817150500001"
+	Dim receiptID : receiptID = "021060211215600001"
 
 	' AppToApp 앱스킴 성공처리시 반환되는 서명값(iOS-sig, Android-signature)
 	' - AppToApp 인증시 - 앱스킴 성공 서명값 기재
 	' - Talk To Message 인증시 - 공백("") 처리
-	signature = ""
+	Dim signature : signature = ""
 	
 
 	On Error Resume Next
 
-		Set result = m_KakaocertService.VerifyESign(clientCode, receiptID, signature)
+		Dim result : Set result = m_KakaocertService.VerifyESign(clientCode, receiptID, signature)
 
 		If Err.Number <> 0 then
-			code = Err.Number
-			message =  Err.Description
+			Dim code : code = Err.Number
+			Dim message : message =  Err.Description
 			Err.Clears
 		End If
 

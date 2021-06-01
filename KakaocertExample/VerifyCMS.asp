@@ -1,3 +1,5 @@
+<%@ Language = "VBScript" %>
+<% Option Explicit %>
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=euc-kr" />
@@ -14,19 +16,19 @@
 	'**************************************************************
 
 	' Kakaocert 이용기관코드, Kakaocert 파트너 사이트에서 확인
-	clientCode = "020040000001"	
+	Dim clientCode : clientCode = "020040000050"	
 
 	' 접수 아이디
-	receiptID = "020090817135900001"
+	Dim receiptID : receiptID = "021060211283500001"
 	
 
 	On Error Resume Next
 
-		Set result = m_KakaocertService.VerifyCMS(clientCode, receiptID)
+		Dim result : Set result = m_KakaocertService.VerifyCMS(clientCode, receiptID)
 
 		If Err.Number <> 0 then
-			code = Err.Number
-			message =  Err.Description
+			Dim code : code = Err.Number
+			Dim message : message =  Err.Description
 			Err.Clears
 		End If
 

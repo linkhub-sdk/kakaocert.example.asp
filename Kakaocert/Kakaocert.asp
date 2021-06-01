@@ -3,21 +3,28 @@
 Application("LINKHUB_TOKEN_SCOPE_KAKAOCERT") = Array("member","310","320","330")
 Const ServiceID = "KAKAOCERT"
 Const ServiceURL = "https://kakaocert-api.linkhub.co.kr"
+Const ServiceURL_GA = "https://ga-kakaocert-api.linkhub.co.kr"
+'Const ServiceURL = "https://dev-kc-api.linkhub.kr"
+'Const ServiceURL_GA = "https://dev-kc-api.linkhub.kr"
 
-Const APIVersion = "1.0"
+Const APIVersion = "2.0"
 Const adTypeBinary = 1
 Const adTypeText = 2
-
+Const m_useLocalTimeYN = false
 
 Class KakaocertService
 
 	Private m_TokenDic
 	Private m_Linkhub
 	Private m_IPRestrictOnOff
-
+	Private m_useStaticIP
 
 	Public Property Let IPRestrictOnOff(ByVal value)
 		m_IPRestrictOnOff = value
+	End Property
+	
+	Public Property Let useStaticIP(ByVal value)
+		m_useStaticIP = value
 	End Property
 
 	Public Sub Class_Initialize
@@ -59,8 +66,8 @@ Class KakaocertService
 	End Sub
 
 	Public Function getSession_token(ClientCode)
-		refresh = False
-		Set m_Token = Nothing
+		Dim refresh : refresh = False
+		Dim m_Token : Set m_Token = Nothing
 		
 		If m_TokenDic.Exists(ClientCode) Then 
 			Set m_Token = m_TokenDic.Item(ClientCode)
@@ -70,6 +77,7 @@ Class KakaocertService
 			refresh = True
 		Else
 			'CheckScope
+			Dim scope
 			For Each scope In m_scope
 				If InStr(m_Token.strScope,scope) = 0 Then
 					refresh = True
@@ -78,14 +86,14 @@ Class KakaocertService
 			Next
 			If refresh = False then
 				Dim utcnow
-				utcnow = CDate(Replace(left(m_linkhub.getTime,19),"T" , " " ))
+				utcnow = CDate(Replace(left(m_linkhub.getTime(m_useStaticIP, m_useLocalTimeYN),19),"T" , " " ))
 				refresh = CDate(Replace(left(m_Token.expiration,19),"T" , " " )) < utcnow
 			End if
 		End If
 		
 		If refresh Then
 			If m_TokenDic.Exists(ClientCode) Then m_TokenDic.remove ClientCode
-			Set m_Token = m_Linkhub.getToken(ServiceID, ClientCode, m_scope, IIf(m_IPRestrictOnOff, "", "*"))
+			Set m_Token = m_Linkhub.getToken(ServiceID, ClientCode, m_scope, IIf(m_IPRestrictOnOff, "", "*"), m_useStaticIP, m_useLocalTimeYN)
 			m_Token.set "strScope", Join(m_scope,"|")
 			m_TokenDic.Add ClientCode, m_Token
 		End If
@@ -96,19 +104,19 @@ Class KakaocertService
 
 	'Private Functions
 	Public Function httpGET(url , BearerToken , UserID )
-		Set winhttp1 = CreateObject("WinHttp.WinHttpRequest.5.1")
-		Call winhttp1.Open("GET", ServiceURL + url, false)
+		Dim winhttp1 : Set winhttp1 = CreateObject("WinHttp.WinHttpRequest.5.1")
+		Call winhttp1.Open("GET", IIf(m_useStaticIP, ServiceURL_GA, ServiceURL) + url, false)
 		
 		Call winhttp1.setRequestHeader("Authorization", "Bearer " + BearerToken)
 		Call winhttp1.setRequestHeader("x-pb-version", APIVersion)
 		
 		winhttp1.Send
 		winhttp1.WaitForResponse
-		result = winhttp1.responseText
+		Dim result : result = winhttp1.responseText
 
 		If winhttp1.Status <> 200 Then
 			Set winhttp1 = Nothing
-			Set parsedDic = m_Linkhub.parse(result)
+			Dim parsedDic : Set parsedDic = m_Linkhub.parse(result)
 			Err.raise parsedDic.code, "KAKAOCERT", parsedDic.message
 		End If
 		
@@ -120,9 +128,9 @@ Class KakaocertService
 
 	Public Function httpPOST(url , BearerToken , override , postdata ,  UserID)
 		
-		Set winhttp1 = CreateObject("WinHttp.WinHttpRequest.5.1")
+		Dim winhttp1 : Set winhttp1 = CreateObject("WinHttp.WinHttpRequest.5.1")
 
-		Call winhttp1.Open("POST", ServiceURL + url)
+		Call winhttp1.Open("POST", IIf(m_useStaticIP, ServiceURL_GA, ServiceURL) + url)
 		Call winhttp1.setRequestHeader("x-pb-version", APIVersion)
 		Call winhttp1.setRequestHeader("Content-Type", "Application/json")
 		
@@ -130,27 +138,27 @@ Class KakaocertService
 			Call winhttp1.setRequestHeader("Authorization", "Bearer " + BearerToken)
 		End If
 
-		xDate = m_linkhub.getTime
+		Dim xDate : xDate = m_linkhub.getTime(m_useStaticIP, m_useLocalTimeYN)
 		Call winhttp1.setRequestHeader("x-lh-date", xDate)
-		Call winhttp1.setRequestHeader("x-lh-version", "1.0")
+		Call winhttp1.setRequestHeader("x-lh-version", "2.0")
 	
 
-		target = "POST" + Chr(10)
-		target = target + m_Linkhub.b64md5(postData) + Chr(10)
+		Dim target : target = "POST" + Chr(10)
+		target = target + m_Linkhub.b64_sha256(postData) + Chr(10)
 		target = target + xDate + Chr(10)
-		target = target + "1.0" + Chr(10)
+		target = target + "2.0" + Chr(10)
 		
-		auth_target =  m_Linkhub.b64hmacsha1(m_Linkhub.SecretKey, target)
+		Dim auth_target : auth_target =  m_Linkhub.b64_hmac_sha256(m_Linkhub.SecretKey, target)
 
 		Call winhttp1.setRequestHeader("x-kc-auth", m_Linkhub.LinkID + " " +auth_target)
 
 		winhttp1.Send (postdata)
 		winhttp1.WaitForResponse
-		result = winhttp1.responseText
+		Dim result : result = winhttp1.responseText
 		
 		If winhttp1.Status <> 200 Then
 			Set winhttp1 = Nothing
-			Set parsedDic = m_Linkhub.parse(result)
+			Dim parsedDic :  Set parsedDic = m_Linkhub.parse(result)
 			Err.raise parsedDic.code, "KAKAOCERT", parsedDic.message
 		End If
 		
@@ -215,13 +223,13 @@ Class KakaocertService
 		
 		RequestESignObj.isAppUseYN = IsAppUseYN
 
-		Set tmpDic = RequestESignObj.toJsonInfo
+		Dim tmpDic : Set tmpDic = RequestESignObj.toJsonInfo
 
-		postdata = toString(tmpDic)
+        Dim postdata : postdata = toString(tmpDic)
 
-		Set infoTmp = New ResponseESign
+		Dim infoTmp : Set infoTmp = New ResponseESign
 		
-		Set result = httpPOST("/SignToken/Request", getSession_token(ClientCode), "", postdata, "")
+		Dim result : Set result = httpPOST("/SignToken/Request", getSession_token(ClientCode), "", postdata, "")
 
 		infoTmp.fromJsonInfo result
 
@@ -231,25 +239,31 @@ Class KakaocertService
 
 	Public Function RequestVerifyAuth(ClientCode, ByRef RequestVerifyAuthObj)
 		
-		Set tmpDic = RequestVerifyAuthObj.toJsonInfo
+		Dim tmpDic : Set tmpDic = RequestVerifyAuthObj.toJsonInfo
 
-		postdata = toString(tmpDic)
+		Dim postdata : postdata = toString(tmpDic)
 		
-		Set result = httpPOST("/SignIdentity/Request", getSession_token(ClientCode), "", postdata, "")
+		Dim result : Set result = httpPOST("/SignIdentity/Request", getSession_token(ClientCode), "", postdata, "")
 
 		RequestVerifyAuth = result.receiptId
 
 	End Function
 
-	Public Function RequestCMS(ClientCode, ByRef RequestCMSObj)
+	Public Function RequestCMS(ClientCode, ByRef RequestCMSObj, IsAppUseYN)
 		
-		Set tmpDic = RequestCMSObj.toJsonInfo
+		RequestCMSObj.isAppUseYN = IsAppUseYN
 
-		postdata = toString(tmpDic)
+		Dim tmpDic : Set tmpDic = RequestCMSObj.toJsonInfo
+
+		Dim postdata : postdata = toString(tmpDic)
+
+		Dim infoTmp : Set infoTmp = New ResponseCMS
 		
-		Set result = httpPOST("/SignDirectDebit/Request", getSession_token(ClientCode), "", postdata, "")
+		Dim result : Set result = httpPOST("/SignDirectDebit/Request", getSession_token(ClientCode), "", postdata, "")
 
-		RequestCMS = result.receiptId
+		infoTmp.fromJsonInfo result
+
+		Set RequestCMS = infoTmp
 
 	End Function
 
@@ -262,11 +276,9 @@ Class KakaocertService
 			Err.Raise -99999999, "KAKAOCERT", "접수아이디가 입력되지 않았습니다."
 		End If
 
-		uri = "/SignToken/Status/" + ReceiptID
+		Dim infoTmp : Set infoTmp = New ResultESignObj
 
-		Set infoTmp = New ResultESignObj
-
-		Set result = httpGET(uri, getSession_token(ClientCode), "")
+		Dim result : Set result = httpGET("/SignToken/Status/" + ReceiptID, getSession_token(ClientCode), "")
 
 		infoTmp.fromJsonInfo result
 		Set GetESignState = infoTmp
@@ -282,10 +294,9 @@ Class KakaocertService
 			Err.Raise -99999999, "KAKAOCERT", "접수아이디가 입력되지 않았습니다."
 		End If
 
+		Dim infoTmp : Set infoTmp = New ResultCMSObj
 
-		Set infoTmp = New ResultCMSObj
-
-		Set result = httpGET("/SignDirectDebit/Status/" + ReceiptID, getSession_token(ClientCode), "")
+		Dim result : Set result = httpGET("/SignDirectDebit/Status/" + ReceiptID, getSession_token(ClientCode), "")
 
 		infoTmp.fromJsonInfo result
 		Set GetCMSState = infoTmp
@@ -300,10 +311,9 @@ Class KakaocertService
 			Err.Raise -99999999, "KAKAOCERT", "접수아이디가 입력되지 않았습니다."
 		End If
 
+		Dim infoTmp : Set infoTmp = New ResultVerifyAuthObj
 
-		Set infoTmp = New ResultVerifyAuthObj
-
-		Set result = httpGET("/SignIdentity/Status/" + ReceiptID, getSession_token(ClientCode), "")
+		Dim result : Set result = httpGET("/SignIdentity/Status/" + ReceiptID, getSession_token(ClientCode), "")
 
 		infoTmp.fromJsonInfo result
 		Set GetVerifyAuthState = infoTmp
@@ -319,15 +329,15 @@ Class KakaocertService
 			Err.Raise -99999999, "KAKAOCERT", "접수아이디가 입력되지 않았습니다."
 		End If
 
-		uri = "/SignToken/Verify/" + ReceiptID
+		Dim uri : uri = "/SignToken/Verify/" + ReceiptID
 
 		If Signature <> "" Then
 			uri = uri+"/"+Signature
 		End If 
 
-		Set infoTmp = New ResponseVerify
+		Dim infoTmp : Set infoTmp = New ResponseVerify
 
-		Set result = httpGET(uri, getSession_token(ClientCode), "")
+		Dim result : Set result = httpGET(uri, getSession_token(ClientCode), "")
 
 		infoTmp.fromJsonInfo result
 		Set VerifyESign = infoTmp
@@ -342,10 +352,9 @@ Class KakaocertService
 			Err.Raise -99999999, "KAKAOCERT", "접수아이디가 입력되지 않았습니다."
 		End If
 
+		Dim infoTmp : Set infoTmp = New ResponseVerify
 
-		Set infoTmp = New ResponseVerify
-
-		Set result = httpGET("/SignDirectDebit/Verify/" + ReceiptID, getSession_token(ClientCode), "")
+		Dim result : Set result = httpGET("/SignDirectDebit/Verify/" + ReceiptID, getSession_token(ClientCode), "")
 
 		infoTmp.fromJsonInfo result
 		Set VerifyCMS = infoTmp
@@ -360,10 +369,9 @@ Class KakaocertService
 			Err.Raise -99999999, "KAKAOCERT", "접수아이디가 입력되지 않았습니다."
 		End If
 
+		Dim infoTmp : Set infoTmp = New ResponseVerify
 
-		Set infoTmp = New ResponseVerify
-
-		Set result = httpGET("/SignIdentity/Verify/" + ReceiptID, getSession_token(ClientCode), "")
+		Dim result : Set result = httpGET("/SignIdentity/Verify/" + ReceiptID, getSession_token(ClientCode), "")
 
 		infoTmp.fromJsonInfo result
 		Set VerifyAuth = infoTmp
@@ -395,6 +403,17 @@ Class ResponseVerify
 	End Sub
 End Class
 
+Class ResponseCMS
+	Public tx_id
+	Public receiptId
+
+	Public Sub fromJsonInfo(jsonInfo)
+		On Error Resume Next
+		receiptId = jsonInfo.receiptId
+		tx_id = jsonInfo.tx_id
+		On Error GoTo 0
+	End Sub
+End Class
 
 Class RequestESignObj
 
@@ -448,7 +467,6 @@ Class ResultESignObj
 	public clientName
 	public tmstitle
 	public tmsmessage
-
 
 	public subClientName
 	public subClientCode
@@ -599,6 +617,7 @@ Class RequestCMSObj
 	Public BankAccountNum
 	Public BankCode
 	Public ClientUserID
+	Public isAppUseYN
 
 	Public Function toJsonInfo()
 		Set toJsonInfo = JSON.parse("{}")
@@ -617,6 +636,7 @@ Class RequestCMSObj
 		toJsonInfo.Set "BankAccountNum", BankAccountNum
 		toJsonInfo.Set "BankCode", BankCode
 		toJsonInfo.Set "ClientUserID", ClientUserID
+		toJsonInfo.Set "isAppUseYN", isAppUseYN
 	End Function 
 
 End Class
@@ -647,6 +667,9 @@ Class ResultCMSObj
 	public viewDT
 	public completeDT
 	public verifyDT
+	public appUseYN
+	Public tx_id
+
 
 	Public Sub fromJsonInfo(jsonInfo)
 		On Error Resume Next
@@ -674,6 +697,9 @@ Class ResultCMSObj
 		viewDT = jsonInfo.viewDT
 		completeDT = jsonInfo.completeDT
 		verifyDT = jsonInfo.verifyDT
+
+		appUseYN = jsonInfo.appUseYN
+		tx_id = jsonInfo.tx_id
 
 		On Error GoTo 0
 	End Sub

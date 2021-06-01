@@ -14,6 +14,10 @@
 		<PARAMETER name="k"/>
 		<PARAMETER name="d"/>
 	</method>
+	<method name="b64_hmac_sha256">
+		<PARAMETER name="k"/>
+		<PARAMETER name="d"/>
+	</method>
 	<method name="getUTCTime">
 	</method>
 	<method name="getUTC">
@@ -22,7 +26,11 @@
 	<method name="b64_md5">
 		<PARAMETER name="s"/>
 	</method>
-
+	<method name="b64_sha256">
+		<PARAMETER name="s"/>
+	</method>
+	<method name="getLocalTime">
+	</method>
 </public>
 
 <script language="javascript">
@@ -41,6 +49,35 @@ function b64_hmac_sha1(k, d)
 { 
 	var hmacObj = new jsSHA(d, "TEXT");
 	return hmacObj.getHMAC(k,"B64","SHA-1","B64");
+}
+function b64_hmac_sha256(k, d)
+{ 
+	var hmacObj = new jsSHA(d, "TEXT");
+	return hmacObj.getHMAC(k,"B64","SHA-256","B64");
+}
+function b64_sha256(d)
+{
+	var hmacObj = new jsSHA(d, "TEXT");
+	return hmacObj.getHash("SHA-256","B64", 1, "B64");
+}
+
+function getLocalTime()
+{
+	var date = new Date();
+	var year = date.getUTCFullYear();
+	var mouth = date.getUTCMonth() + 1;
+	var day = date.getUTCDate();
+	var hours = date.getUTCHours();
+	var minutes = date.getUTCMinutes();
+	var seconds = date.getUTCSeconds();
+
+	if (mouth < 10) mouth = "0" + mouth;
+	if (day < 10) day = "0" + day;
+	if (hours < 10) hours = "0" + hours;
+	if (minutes < 10) minutes = "0" + minutes;
+	if (seconds < 10) seconds = "0" + seconds;
+
+	return year + "-" + mouth + "-" + day + "T" + hours + ":" + minutes + ":" + seconds + "Z";
 }
 
 var SUPPORTED_ALGS = 4 | 2 | 1;
