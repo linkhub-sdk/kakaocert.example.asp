@@ -17,7 +17,7 @@
 	Dim clientCode : clientCode = "020040000001"	
 
 	' 접수 아이디
-	Dim receiptID : receiptID = "021060211215600001"
+	Dim receiptID : receiptID = "021060416453400001"
 
 	' AppToApp 앱스킴 성공처리시 반환되는 서명값(iOS-sig, Android-signature)
 	' - AppToApp 인증시 - 앱스킴 성공 서명값 기재
