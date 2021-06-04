@@ -2,8 +2,6 @@
 <%
 Const linkhub_ServiceURL = "https://auth.linkhub.co.kr"
 Const linkhub_ServiceURL_GA = "https://ga-auth.linkhub.co.kr"
-'Const linkhub_ServiceURL = "https://dev-auth.linkhub.kr"
-'Const linkhub_ServiceURL_GA = "https://dev-auth.linkhub.kr"
 
 class Linkhub
 

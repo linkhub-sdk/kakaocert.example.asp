@@ -1,5 +1,3 @@
-<%@ Language = "VBScript" %>
-<% Option Explicit %>
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=euc-kr" />
@@ -14,7 +12,7 @@
     '**************************************************************
 
 	' Kakaocert 이용기관코드, Kakaocert 파트너 사이트에서 확인
-	Dim clientCode : clientCode = "020040000050"		
+	Dim clientCode : clientCode = "020040000001"		
 	
 	' App To App 인증여부
 	' True - AppToApp 인증방식, false-Talk Message 인증방식
@@ -32,13 +30,13 @@
 	requestObj.Expires_in = 60
 
 	' 수신자 생년월일, 형식 : YYYYMMDD
-	requestObj.ReceiverBirthDay = "19880301"
+	requestObj.ReceiverBirthDay = "19700101"
 
 	' 수신자 휴대폰번호
-	requestObj.ReceiverHP = "01054437896"
+	requestObj.ReceiverHP = "01012341234"
 
 	' 수신자 성명
-	requestObj.ReceiverName = "최상혁"
+	requestObj.ReceiverName = "홍길동"
 
 	'별칭코드, 이용기관이 생성한 별칭코드 (파트너 사이트에서 확인가능)
 	' 카카오톡 인증메시지 중 "요청기관" 항목에 표시

@@ -4,8 +4,6 @@ Application("LINKHUB_TOKEN_SCOPE_KAKAOCERT") = Array("member","310","320","330")
 Const ServiceID = "KAKAOCERT"
 Const ServiceURL = "https://kakaocert-api.linkhub.co.kr"
 Const ServiceURL_GA = "https://ga-kakaocert-api.linkhub.co.kr"
-'Const ServiceURL = "https://dev-kc-api.linkhub.kr"
-'Const ServiceURL_GA = "https://dev-kc-api.linkhub.kr"
 
 Const APIVersion = "2.0"
 Const adTypeBinary = 1

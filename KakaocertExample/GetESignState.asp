@@ -1,5 +1,3 @@
-<%@ Language = "VBScript" %>
-<% Option Explicit %>
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=euc-kr" />
@@ -13,13 +11,13 @@
 	'**************************************************************
 
 	' Kakaocert 이용기관코드, Kakaocert 파트너 사이트에서 확인
-	Dim clientCode : clientCode = "020040000050"	
+	Dim clientCode : clientCode = "020040000001"	
 
 	' 접수 아이디
 	Dim receiptID : receiptID = "021060211215600001"
 	
 	On Error Resume Next
-	
+
 	Dim result : Set result = m_KakaocertService.GetESignState(clientCode, receiptID)
 
 	If Err.Number <> 0 Then

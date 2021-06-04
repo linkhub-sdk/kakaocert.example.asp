@@ -12,10 +12,10 @@
 	'**************************************************************
 
 	' 링크아이디 
-	Dim LinkID : LinkID = "KAKAOCERT0406"
+	Dim LinkID : LinkID = "TESTER"
 	
 	' 비밀키
-	Dim SecretKey : SecretKey = "9HOTRlrOipIPRGkDdELwYnESP4XTOGZbXrD67FvNyqU="
+	Dim SecretKey : SecretKey = "SwWxqU+0TErBXy/9TVjIPEnI0VTUMMSQZtJf3Ed8q3I="
 	
 	Dim m_KakaocertService : set m_KakaocertService = New KakaocertService
 	
