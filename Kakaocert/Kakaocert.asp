@@ -3,6 +3,7 @@
 Application("LINKHUB_TOKEN_SCOPE_KAKAOCERT") = Array("member","310","320","330")
 Const ServiceID = "KAKAOCERT"
 Const ServiceURL = "https://kakaocert-api.linkhub.co.kr"
+Const ServiceURL_Static = "https://static-kakaocert-api.linkhub.co.kr"
 Const ServiceURL_GA = "https://ga-kakaocert-api.linkhub.co.kr"
 
 Const APIVersion = "2.0"
@@ -16,6 +17,7 @@ Class KakaocertService
 	Private m_Linkhub
 	Private m_IPRestrictOnOff
 	Private m_useStaticIP
+	Private m_UseGAIP
 
 	Public Property Let IPRestrictOnOff(ByVal value)
 		m_IPRestrictOnOff = value
@@ -24,7 +26,9 @@ Class KakaocertService
 	Public Property Let useStaticIP(ByVal value)
 		m_useStaticIP = value
 	End Property
-
+	Public Property Let UseGAIP(ByVal value)
+		m_UseGAIP = value
+	End Property
 	Public Sub Class_Initialize
 		
 		On Error Resume next
@@ -39,8 +43,9 @@ Class KakaocertService
 		End If
 		
 		m_IPRestrictOnOff = True
+		m_UseStaticIP = False
+		m_UseGAIP = False
 		Set m_Linkhub = New Linkhub
-		
 	End Sub
 
 	Public Sub Class_Terminate
@@ -63,6 +68,16 @@ Class KakaocertService
 		m_Linkhub.SecretKey = SecretKey
 	End Sub
 
+	Private Function getTargetURL() 
+		If m_UseGAIP Then
+			getTargetURL = ServiceURL_GA
+		ElseIf m_UseStaticIP Then
+			getTargetURL = ServiceURL_Static
+		Else
+			getTargetURL = ServiceURL
+		End If
+	End Function
+
 	Public Function getSession_token(ClientCode)
 		Dim refresh : refresh = False
 		Dim m_Token : Set m_Token = Nothing
@@ -84,14 +99,14 @@ Class KakaocertService
 			Next
 			If refresh = False then
 				Dim utcnow
-				utcnow = CDate(Replace(left(m_linkhub.getTime(m_useStaticIP, m_useLocalTimeYN),19),"T" , " " ))
+				utcnow = CDate(Replace(left(m_linkhub.getTime(m_useStaticIP, m_useLocalTimeYN, m_useGAIP),19),"T" , " " ))
 				refresh = CDate(Replace(left(m_Token.expiration,19),"T" , " " )) < utcnow
 			End if
 		End If
 		
 		If refresh Then
 			If m_TokenDic.Exists(ClientCode) Then m_TokenDic.remove ClientCode
-			Set m_Token = m_Linkhub.getToken(ServiceID, ClientCode, m_scope, IIf(m_IPRestrictOnOff, "", "*"), m_useStaticIP, m_useLocalTimeYN)
+			Set m_Token = m_Linkhub.getToken(ServiceID, ClientCode, m_scope, IIf(m_IPRestrictOnOff, "", "*"), m_useStaticIP, m_useLocalTimeYN, m_useGAIP)
 			m_Token.set "strScope", Join(m_scope,"|")
 			m_TokenDic.Add ClientCode, m_Token
 		End If
@@ -103,7 +118,8 @@ Class KakaocertService
 	'Private Functions
 	Public Function httpGET(url , BearerToken , UserID )
 		Dim winhttp1 : Set winhttp1 = CreateObject("WinHttp.WinHttpRequest.5.1")
-		Call winhttp1.Open("GET", IIf(m_useStaticIP, ServiceURL_GA, ServiceURL) + url, false)
+
+		Call winhttp1.Open("GET", getTargetURL() + url, false)
 		
 		Call winhttp1.setRequestHeader("Authorization", "Bearer " + BearerToken)
 		Call winhttp1.setRequestHeader("x-pb-version", APIVersion)
@@ -128,7 +144,7 @@ Class KakaocertService
 		
 		Dim winhttp1 : Set winhttp1 = CreateObject("WinHttp.WinHttpRequest.5.1")
 
-		Call winhttp1.Open("POST", IIf(m_useStaticIP, ServiceURL_GA, ServiceURL) + url)
+		Call winhttp1.Open("POST", getTargetURL() + url)
 		Call winhttp1.setRequestHeader("x-pb-version", APIVersion)
 		Call winhttp1.setRequestHeader("Content-Type", "Application/json")
 		
@@ -136,7 +152,7 @@ Class KakaocertService
 			Call winhttp1.setRequestHeader("Authorization", "Bearer " + BearerToken)
 		End If
 
-		Dim xDate : xDate = m_linkhub.getTime(m_useStaticIP, m_useLocalTimeYN)
+		Dim xDate : xDate = m_linkhub.getTime(m_useStaticIP, m_useLocalTimeYN, m_useGAIP)
 		Call winhttp1.setRequestHeader("x-lh-date", xDate)
 		Call winhttp1.setRequestHeader("x-lh-version", "2.0")
 	

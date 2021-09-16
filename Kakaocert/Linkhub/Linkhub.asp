@@ -1,6 +1,7 @@
 <!--#include file="json2.asp"--> 
 <%
 Const linkhub_ServiceURL = "https://auth.linkhub.co.kr"
+Const linkhub_ServiceURL_Static = "https://static-auth.linkhub.co.kr"
 Const linkhub_ServiceURL_GA = "https://ga-auth.linkhub.co.kr"
 
 class Linkhub
@@ -56,7 +57,17 @@ Public Sub Class_Terminate
     Set m_sha1 = Nothing 
 End Sub 
 
-Public function getTime(useStaticIP, useLocalTimeYN)
+Private Function getTargetURL(useStaticIP, useGAIP)
+    If useGAIP Then
+        getTargetURL = linkhub_ServiceURL_GA
+    ElseIf useStaticIP Then
+        getTargetURL = linkhub_ServiceURL_Static
+    Else
+        getTargetURL = linkhub_ServiceURL
+    End If
+End Function
+
+Public function getTime(useStaticIP, useLocalTimeYN, useGAIP)
     Dim result
 
     If useLocalTimeYN Then 
@@ -64,7 +75,7 @@ Public function getTime(useStaticIP, useLocalTimeYN)
     Else   
         Dim winhttp1 : Set winhttp1 = CreateObject("WinHttp.WinHttpRequest.5.1")
 
-        Call winhttp1.Open("GET", IIf(useStaticIP, linkhub_ServiceURL_GA, linkhub_ServiceURL) + "/Time")
+        Call winhttp1.Open("GET", getTargetURL(useStaticIP, useGAIP) + "/Time")
         
         winhttp1.send
         winhttp1.WaitForResponse
@@ -82,7 +93,7 @@ Public function getTime(useStaticIP, useLocalTimeYN)
 
 End Function
 
-public function getToken(serviceID , access_id, Scope, forwardIP, useStaticIP, useLocalTimeYN)
+public function getToken(serviceID , access_id, Scope, forwardIP, useStaticIP, useLocalTimeYN, useGAIP)
 
     Dim postObject : Set postObject = JSON.parse("{}")
     postObject.set "access_id", access_id
@@ -90,10 +101,10 @@ public function getToken(serviceID , access_id, Scope, forwardIP, useStaticIP, u
 
     Dim postData : postData = toString(postObject)
 
-    Dim xDate : xDate = getTime(useStaticIP, useLocalTimeYN)
+    Dim xDate : xDate = getTime(useStaticIP, useLocalTimeYN, useGAIP)
     Dim winhttp1 : Set winhttp1 = CreateObject("WinHttp.WinHttpRequest.5.1")
 
-    Call winhttp1.Open("POST", IIf(useStaticIP, linkhub_ServiceURL_GA, linkhub_ServiceURL) + "/" + serviceID + "/Token")
+    Call winhttp1.Open("POST", getTargetURL(useStaticIP, useGAIP) + "/" + serviceID + "/Token")
     Call winhttp1.setRequestHeader("x-lh-date", xdate)
     Call winhttp1.setRequestHeader("x-lh-version", "2.0")
     If forwardIP <> "" Then 
@@ -132,7 +143,7 @@ Public Function GetBalance(BearerToken, serviceID, useStaticIP )
 
     Dim winhttp1 : Set winhttp1 = CreateObject("WinHttp.WinHttpRequest.5.1")
 
-    Call winhttp1.Open("GET", IIf(useStaticIP, linkhub_ServiceURL_GA, linkhub_ServiceURL) + "/" + serviceID + "/Point")
+    Call winhttp1.Open("GET", getTargetURL(useStaticIP, useGAIP) + "/" + serviceID + "/Point")
     Call winhttp1.setRequestHeader("Authorization", "Bearer " + BearerToken)
     
     winhttp1.send
@@ -154,7 +165,7 @@ End Function
 Public Function GetPartnerBalance(BearerToken, serviceID, useStaticIP)
 
     Dim winhttp1 : Set winhttp1 = CreateObject("WinHttp.WinHttpRequest.5.1")
-    Call winhttp1.Open("GET", IIf(useStaticIP, linkhub_ServiceURL_GA, linkhub_ServiceURL) + "/" + serviceID + "/PartnerPoint")
+    Call winhttp1.Open("GET", getTargetURL(useStaticIP, useGAIP) + "/" + serviceID + "/Point")
     Call winhttp1.setRequestHeader("Authorization", "Bearer " + BearerToken)
     
     winhttp1.send
@@ -176,7 +187,7 @@ End Function
 Public Function GetPartnerURL(BearerToken, serviceID, TOGO, useStaticIP)
 
     Dim winhttp1 : Set winhttp1 = CreateObject("WinHttp.WinHttpRequest.5.1")
-    Call winhttp1.Open("GET", IIf(useStaticIP, linkhub_ServiceURL_GA, linkhub_ServiceURL) + "/" + serviceID + "/URL?TG=" + TOGO)
+    Call winhttp1.Open("GET", getTargetURL(useStaticIP, useGAIP) + "/" + serviceID + "/Point")
     Call winhttp1.setRequestHeader("Authorization", "Bearer " + BearerToken)
     
     winhttp1.send
