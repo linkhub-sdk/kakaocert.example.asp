@@ -26,5 +26,5 @@
 	m_KakaocertService.IPRestrictOnOff = True
 
 	' 카카오써트 API 서비스 고정 IP 사용여부, True-사용, False-미사용, 기본값(False)
-	' m_KakaocertService.useStaticIP = False
+	m_KakaocertService.useStaticIP = False
 %>
