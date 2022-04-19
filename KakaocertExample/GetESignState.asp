@@ -14,7 +14,7 @@
 	Dim clientCode : clientCode = "020040000001"	
 
 	' 접수 아이디
-	Dim receiptID : receiptID = "021060416453400001"
+	Dim receiptID : receiptID = "022041917152500001"
 	
 	On Error Resume Next
 
@@ -44,6 +44,7 @@
 						<li>regDT (등록일시) : <%=result.regDT %> </li>
 						<li>expires_in (인증요청 만료시간(초)) : <%=result.expires_in %> </li>
 						<li>callCenterNum (고객센터 번호) : <%=result.callCenterNum %> </li>
+						<li>callCenterName (고객센터명) : <%=result.callCenterName %> </li>
 
 
 						<li>allowSimpleRegistYN (은행계좌 실명확인 생략여부	) : <%=result.allowSimpleRegistYN %> </li>

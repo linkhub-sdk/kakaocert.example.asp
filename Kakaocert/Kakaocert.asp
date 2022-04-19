@@ -437,6 +437,7 @@ End Class
 Class RequestESignObj
 
 	public CallCenterNum
+	public CallCenterName
 	public Expires_in
 	public PayLoad
 	public ReceiverBirthDay
@@ -453,6 +454,7 @@ Class RequestESignObj
 	Public Function toJsonInfo()
 		Set toJsonInfo = JSON.parse("{}")
 		toJsonInfo.Set "CallCenterNum", CallCenterNum
+		toJsonInfo.Set "CallCenterName", CallCenterName
 		toJsonInfo.Set "Expires_in", Expires_in
 		toJsonInfo.Set "PayLoad", PayLoad
 		toJsonInfo.Set "ReceiverBirthDay", ReceiverBirthDay
@@ -476,6 +478,7 @@ Class ResultESignObj
 	public state
 	public expires_in
 	public callCenterNum
+	public callCenterName
 
 	public allowSimpleRegistYN
 	public verifyNameYN
@@ -505,6 +508,7 @@ Class ResultESignObj
 		receiverBirthday = jsonInfo.receiverBirthday
 		expires_in = jsonInfo.expires_in
 		callCenterNum = jsonInfo.callCenterNum
+		callCenterName = jsonInfo.callCenterName
 
 		allowSimpleRegistYN = jsonInfo.allowSimpleRegistYN
 		verifyNameYN = jsonInfo.verifyNameYN
@@ -532,6 +536,7 @@ End Class
 Class RequestVerifyAuthObj
 
 	public CallCenterNum
+	public CallCenterName
 	public Expires_in
 	public PayLoad
 	public ReceiverBirthDay
@@ -547,6 +552,7 @@ Class RequestVerifyAuthObj
 	Public Function toJsonInfo()
 		Set toJsonInfo = JSON.parse("{}")
 		toJsonInfo.Set "CallCenterNum", CallCenterNum
+		toJsonInfo.Set "CallCenterName", CallCenterName
 		toJsonInfo.Set "Expires_in", Expires_in
 		toJsonInfo.Set "PayLoad", PayLoad
 		toJsonInfo.Set "ReceiverBirthDay", ReceiverBirthDay
@@ -569,6 +575,7 @@ Class ResultVerifyAuthObj
 	public state
 	public expires_in
 	public callCenterNum
+	public callCenterName
 
 	public allowSimpleRegistYN
 	public verifyNameYN
@@ -597,6 +604,7 @@ Class ResultVerifyAuthObj
 		receiverBirthday = jsonInfo.receiverBirthday
 		expires_in = jsonInfo.expires_in
 		callCenterNum = jsonInfo.callCenterNum
+		callCenterName = jsonInfo.callCenterName
 
 		allowSimpleRegistYN = jsonInfo.allowSimpleRegistYN
 		verifyNameYN = jsonInfo.verifyNameYN
@@ -622,6 +630,7 @@ End Class
 Class RequestCMSObj
 
 	public CallCenterNum
+	public CallCenterName
 	public Expires_in
 	public PayLoad
 	public ReceiverBirthDay
@@ -641,6 +650,7 @@ Class RequestCMSObj
 	Public Function toJsonInfo()
 		Set toJsonInfo = JSON.parse("{}")
 		toJsonInfo.Set "CallCenterNum", CallCenterNum
+		toJsonInfo.Set "CallCenterName", CallCenterName
 		toJsonInfo.Set "Expires_in", Expires_in
 		toJsonInfo.Set "PayLoad", PayLoad
 		toJsonInfo.Set "ReceiverBirthDay", ReceiverBirthDay
@@ -667,6 +677,7 @@ Class ResultCMSObj
 	public state
 	public expires_in
 	public callCenterNum
+	public callCenterName
 	public token
 	public allowSimpleRegistYN
 	
@@ -697,6 +708,7 @@ Class ResultCMSObj
 		state = jsonInfo.state
 		expires_in = jsonInfo.expires_in
 		callCenterNum = jsonInfo.callCenterNum
+		callCenterName = jsonInfo.callCenterName
 		token = jsonInfo.token
 		allowSimpleRegistYN = jsonInfo.allowSimpleRegistYN
 
