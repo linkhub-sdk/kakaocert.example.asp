@@ -9,7 +9,6 @@ Const ServiceURL_GA = "https://ga-kakaocert-api.linkhub.co.kr"
 Const APIVersion = "2.0"
 Const adTypeBinary = 1
 Const adTypeText = 2
-Const m_useLocalTimeYN = false
 
 Class KakaocertService
 
@@ -18,6 +17,7 @@ Class KakaocertService
 	Private m_IPRestrictOnOff
 	Private m_useStaticIP
 	Private m_UseGAIP
+	Private m_UseLocalTimeYN
 
 	Public Property Let IPRestrictOnOff(ByVal value)
 		m_IPRestrictOnOff = value
@@ -29,6 +29,10 @@ Class KakaocertService
 	Public Property Let UseGAIP(ByVal value)
 		m_UseGAIP = value
 	End Property
+	Public Property Let UseLocalTimeYN(ByVal value)
+	m_UseLocalTimeYN = value
+	End Property
+
 	Public Sub Class_Initialize
 		
 		On Error Resume next
@@ -45,6 +49,7 @@ Class KakaocertService
 		m_IPRestrictOnOff = True
 		m_UseStaticIP = False
 		m_UseGAIP = False
+		m_UseLocalTimeYN = True
 		Set m_Linkhub = New Linkhub
 	End Sub
 
