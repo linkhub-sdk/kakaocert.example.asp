@@ -30,7 +30,7 @@ Class KakaocertService
 		m_UseGAIP = value
 	End Property
 	Public Property Let UseLocalTimeYN(ByVal value)
-	m_UseLocalTimeYN = value
+		m_UseLocalTimeYN = value
 	End Property
 
 	Public Sub Class_Initialize
