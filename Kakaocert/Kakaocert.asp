@@ -186,27 +186,27 @@ Class KakaocertService
 	End Function
 
 	Private Function StringToBytes(Str)
-	  Dim Stream : Set Stream = Server.CreateObject("ADODB.Stream")
-	  Stream.Type = adTypeText
-	  Stream.Charset = "UTF-8"
-	  Stream.Open
-	  Stream.WriteText Str
-	  Stream.Flush
-	  Stream.Position = 0
-	  Stream.Type = adTypeBinary
-	  buffer= Stream.Read
-	  Stream.Close
-	  'Remove BOM.
-	  Set Stream = Server.CreateObject("ADODB.Stream")
-	  Stream.Type = adTypeBinary
-	  Stream.Open
-	  Stream.write buffer
-	  Stream.Flush
-	  Stream.Position = 3
-	  StringToBytes= Stream.Read
-	  Stream.Close
-	  Set Stream = Nothing
-	 
+		Dim Stream : Set Stream = Server.CreateObject("ADODB.Stream")
+		Stream.Type = adTypeText
+		Stream.Charset = "UTF-8"
+		Stream.Open
+		Stream.WriteText Str
+		Stream.Flush
+		Stream.Position = 0
+		Stream.Type = adTypeBinary
+		buffer= Stream.Read
+		Stream.Close
+		'Remove BOM.
+		Set Stream = Server.CreateObject("ADODB.Stream")
+		Stream.Type = adTypeBinary
+		Stream.Open
+		Stream.write buffer
+		Stream.Flush
+		Stream.Position = 3
+		StringToBytes= Stream.Read
+		Stream.Close
+		Set Stream = Nothing
+	
 	End Function
 
 	Private Function GetFile(FileName)
@@ -244,7 +244,7 @@ Class KakaocertService
 
 		Dim tmpDic : Set tmpDic = RequestESignObj.toJsonInfo
 
-        Dim postdata : postdata = toString(tmpDic)
+		Dim postdata : postdata = toString(tmpDic)
 
 		Dim infoTmp : Set infoTmp = New ResponseESign
 		
