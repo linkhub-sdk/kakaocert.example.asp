@@ -17,7 +17,7 @@
 	Dim clientCode : clientCode = "020040000001"	
 
 	' 접수 아이디
-	Dim receiptID : receiptID = "021060416472000001"
+	Dim receiptID : receiptID = "022050416472000001"
 	
 
 	On Error Resume Next
