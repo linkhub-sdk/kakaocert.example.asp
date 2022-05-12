@@ -17,12 +17,16 @@
 	Dim clientCode : clientCode = "020040000001"	
 
 	' 접수 아이디
-	Dim receiptID : receiptID = "022050416472000001"
+	Dim receiptID : receiptID = "022051213541100001"
 	
+	' AppToApp 앱스킴 성공처리시 반환되는 서명값(iOS-sig, Android-signature)
+	' - AppToApp 인증시 - 앱스킴 성공 서명값 기재
+	' - Talk To Message 인증시 - 공백("") 처리
+	Dim signature : signature = ""
 
 	On Error Resume Next
 
-		Dim result : Set result = m_KakaocertService.VerifyCMS(clientCode, receiptID)
+		Dim result : Set result = m_KakaocertService.VerifyCMS(clientCode, receiptID, signature)
 
 		If Err.Number <> 0 then
 			Dim code : code = Err.Number

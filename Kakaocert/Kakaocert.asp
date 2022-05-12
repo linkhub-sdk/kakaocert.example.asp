@@ -362,7 +362,7 @@ Class KakaocertService
 		Set VerifyESign = infoTmp
 	End Function 
 
-	Public Function VerifyCMS(ClientCode, ReceiptID)
+	Public Function VerifyCMS(ClientCode, ReceiptID, Signature)
 		If ClientCode = "" Then
 			Err.Raise -99999999, "KAKAOCERT", "이용기관코드가 입력되지 않았습니다."
 		End If
@@ -371,9 +371,15 @@ Class KakaocertService
 			Err.Raise -99999999, "KAKAOCERT", "접수아이디가 입력되지 않았습니다."
 		End If
 
+		Dim uri : uri = "/SignDirectDebit/Verify/" + ReceiptID
+
+		If Signature <> "" Then
+			uri = uri+"/"+Signature
+		End If 
+
 		Dim infoTmp : Set infoTmp = New ResponseVerify
 
-		Dim result : Set result = httpGET("/SignDirectDebit/Verify/" + ReceiptID, getSession_token(ClientCode), "")
+		Dim result : Set result = httpGET(uri, getSession_token(ClientCode), "")
 
 		infoTmp.fromJsonInfo result
 		Set VerifyCMS = infoTmp
